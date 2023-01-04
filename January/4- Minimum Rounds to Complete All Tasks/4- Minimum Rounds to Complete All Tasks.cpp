@@ -20,18 +20,18 @@ public:
                 ans+=(it.second/3);
                 //if it visible to 2
             }else if(it.second%2==0){
-                //add 1 to make it visible which mean it has number of 3 which we can consider one of them is 2
+                //add 1 to make it divisor which mean it has number of 3 which we can consider one of them is 2
                 if((it.second+1)%3==0){
                     ans+=((it.second+1)/3);
-                //add 2 to make it visible which mean it has number of 3 which we can consider two of them is 2    
+                //add 2 to make it divisor which mean it has number of 3 which we can consider two of them is 2    
                 }else if((it.second+2)%3==0){
                     ans+=((it.second+2)/3);
-                //if there is no one of them allowed it must visible for 2
+                //if there is no one of them allowed it must divisor for 2
                 }else{
                     ans+=(it.second/2);
                 }
             }else {
-                // if the freq not visible for 2, 3 then try to add 1 or 2 
+                // if the freq not divisor for 2, 3 then try to add 1 or 2 
                 if((it.second+1)%3==0){
                     ans+=((it.second+1)/3);
                 }else if((it.second+2)%3==0){

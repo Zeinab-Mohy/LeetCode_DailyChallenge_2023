@@ -31,6 +31,23 @@
 1. **[Matrix Diagonal Sum](#08--matrix-diagonal-sum)**
 1. **[Spiral Matrix](#09--spiral-matrix)**
 1. **[Spiral Matrix II](#10--spiral-matrix-ii)**
+1. **[Uncrossed Lines](#11--uncrossed-lines)**
+1. **[Solving Questions With Brainpower](#12--solving-questions-with-brainpower)**
+1. **[Count Ways To Build Good Strings](#13--count-ways-to-build-good-strings)**
+1. **[Maximize Score After N Operations](#14--maximize-score-after-n-operations)**
+1. **[Swapping Nodes in a Linked List](#15--swapping-nodes-in-a-linked-list)**
+1. **[Swap Nodes in Pairs](#16--swap-nodes-in-pairs)**
+1. **[Maximum Twin Sum of a Linked List](#17--maximum-twin-sum-of-a-linked-list)**
+1. **[Minimum Number of Vertices to Reach All Nodes](#18--minimum-number-of-vertices-to-reach-all-nodes)**
+1. **[Is Graph Bipartite?](#19--is-graph-bipartite)**
+1. **[Evaluate Division](#20--evaluate-division)**
+1. **[Shortest Bridge](#21--shortest-bridge)**
+1. **[Kth Largest Element in a Stream](#23--kth-largest-element-in-a-stream)**
+1. **[Maximum Subsequence Score](#24--maximum-subsequence-score)**
+1. **[New 21 Game](#25--new-21-game)**
+1. **[Stone Game II](#26--stone-game-ii)**
+1. **[Stone Game III](#27--stone-game-iii)**
+1. **[Minimum Cost to Cut a Stick](#28--minimum-cost-to-cut-a-stick)**
 
 <hr>
 <br><br>
@@ -570,6 +587,958 @@ public:
         return ret;
     }
 
+};
+```
+    
+<hr>
+<br><br>
+
+## 11)  [Uncrossed Lines](https://leetcode.com/problems/uncrossed-lines/)
+
+### Difficulty
+
+![](https://img.shields.io/badge/Medium-orange?style=for-the-badge)
+
+### Related Topic
+
+`Array` `Dynamic Programming`
+
+### Code
+
+
+```cpp
+class Solution {
+public:
+    // A function to find the maximum number of uncrossed lines between two vectors
+    int maxUncrossedLines(vector<int>& a, vector<int>& b) {
+
+        // Get the size of the two vectors
+        int n = a.size(), m = b.size();
+
+        // Create a 2D vector with 2 rows and m+1 columns
+        // to store the maximum number of uncrossed lines
+        vector < vector < int > > dp(2, vector < int > (m + 1));
+
+        // Loop through the elements in the vectors, starting from the end
+        for(int i = n - 1; i >= 0; i--) {
+            for(int j = m - 1; j >= 0; j--) {
+
+                // Get the reference to the current element in the 2D vector
+                int& ret = (dp[i & 1][j] = 0);
+
+                // Calculate the maximum number of uncrossed lines
+                ret = max(dp[(i + 1) & 1][j], dp[i & 1][j + 1]);
+
+                // If the current elements in the vectors are the same, add 1 to the maximum number of uncrossed lines
+                if(a[i] == b[j])
+                    ret = max(ret, dp[(i + 1) & 1][j + 1] + 1);
+            }
+        }
+
+        // Return the maximum number of uncrossed lines
+        return dp[0][0];
+    }
+};
+```
+    
+<hr>
+<br><br>
+
+## 12)  [Solving Questions With Brainpower](https://leetcode.com/problems/solving-questions-with-brainpower/)
+
+### Difficulty
+
+![](https://img.shields.io/badge/Medium-orange?style=for-the-badge)
+
+### Related Topic
+
+`Array` `Dynamic Programming`
+
+### Code
+
+
+```cpp
+// for this problem we will use dp to solve it
+// we can see that we can take the question or leave it, so we will try to take it and leave it and take the maximum
+// we will use dp[i] to be the maximum points we can take from the questions from i to n
+// so dp[i] = max(dp[i+1], dp[i+b+1] + p) where p is the points of the question and b is the number of questions we will skip
+
+// dp[i+1] is the maximum points we can take if we skip the current question (move to the next question)
+// dp[i+b+1] + p is the maximum points we can take if we take the current question and skip the next b questions (move to the next b+1 question)
+// the answer will be dp[0] which is the maximum points we can take from the first question to the last question
+
+class Solution {
+public:
+    long long mostPoints(vector<vector<int>>& questions) {
+        const int n = int(questions.size());
+        vector<long long> dp(n + 5);
+
+        for(int i = n - 1; ~i; --i) {
+            int p = questions[i][0], b = questions[i][1];
+            dp[i] = max(dp[i + 1], dp[min(i + b + 1, n)] + p);
+        }
+
+        return dp[0];
+    }
+};
+```
+
+<hr>
+<br><br>
+
+## 13)  [Count Ways To Build Good Strings](https://leetcode.com/problems/count-ways-to-build-good-strings/)
+
+### Difficulty
+
+![](https://img.shields.io/badge/Medium-orange?style=for-the-badge)
+
+### Related Topic
+
+`Dynamic Programming`
+
+### Code
+
+
+```cpp
+class Solution {
+public:
+    // Set the value of the constant MOD to 1e9+7
+    static constexpr int MOD = 1e9 + 7;
+
+    // Function that adds a value to another and checks if the result is greater than or equal to MOD
+    void add(int& ret, int to_add){
+        ret += to_add;
+        if(ret >= MOD)
+            ret -= MOD;
+    }
+
+    int countGoodStrings(int low, int high, int zero, int one) {
+        // Initialize a vector called dp with size equal to high + 1
+        vector < int > dp(high + 1);
+        
+        // Set the first element of dp to 1
+        dp[0] = 1;
+        
+        // Initialize a variable called sum to 0
+        int sum = 0;
+        
+        for(int i = 1; i <= high; i++){
+            // If i is greater than or equal to zero, add the value of dp[i-zero] to dp[i]
+            if(i >= zero)
+                add(dp[i], dp[i - zero]);
+            
+            // If i is greater than or equal to one, add the value of dp[i-one] to dp[i]
+            if(i >= one)
+                add(dp[i], dp[i - one]);
+            
+            // If i is greater than or equal to low, add the value of dp[i] to sum
+            if(i >= low)
+                add(sum, dp[i]);
+        }
+
+        // Return the value of sum
+        return sum;
+    }
+};
+```
+    
+<hr>
+<br><br>
+
+## 14)  [Maximize Score After N Operations](https://leetcode.com/problems/maximize-score-after-n-operations/)
+
+### Difficulty
+
+![](https://img.shields.io/badge/Hard-red?style=for-the-badge)
+
+### Related Topic
+
+`Array` `Math` `Dynamic Programming` `Backtracking` `Bit Manipulation` `Number Theory` `Bitmask`
+
+### Code
+
+
+```cpp
+class Solution {
+public:
+
+    // declare variables
+    int n, full_mask;
+    // vectors to store numbers and dynamic programming results
+    vector<int> nums, dp;
+
+    // function to check if a bit is empty in a binary mask
+    bool is_empty_bit(int bit, int mask){
+        return !(mask & (1 << bit));
+    }
+
+    // recursive function to calculate the maximum score
+    int max_score(int mask){
+        // if all bits are filled, return 0
+        if(mask == full_mask) return 0;
+        // use memoization to avoid redundant computations
+        int& ret = dp[mask];
+        // calculate the current index based on the number of filled bits
+        int idx = __builtin_popcount(mask) / 2 + 1;
+        // if the result has already been calculated, return it
+        if(~ret) return ret;
+        ret = 0;
+        // iterate over all pairs of numbers
+        for(int i = 0; i < n; i++)
+            for(int j = i + 1; j < n; j++)
+                // if both numbers are empty, calculate the score
+                if(is_empty_bit(i, mask) && is_empty_bit(j, mask))
+                    ret = max(ret, (idx * __gcd(nums[i], nums[j])) + max_score(mask | (1 << i) | (1 << j)));
+        // return the maximum score
+        return ret;
+    }
+
+    int maxScore(vector<int>& nums) {
+        // set the number of elements
+        n = nums.size();
+        // set the vector of numbers
+        this -> nums = nums;
+        // set the full binary mask
+        full_mask = (1 << n) - 1;
+        // initialize the dynamic programming vector with -1
+        dp = vector<int>(1 << n, -1);
+        // return the maximum score starting with an empty mask
+        return max_score(0);
+    }
+};
+```
+    
+<hr>
+<br><br>
+
+## 15)  [Swapping Nodes in a Linked List](https://leetcode.com/problems/swapping-nodes-in-a-linked-list/)
+
+### Difficulty
+
+![](https://img.shields.io/badge/Medium-orange?style=for-the-badge)
+
+### Related Topic
+
+`Linked List` `Two Pointers`
+
+### Code
+
+
+```cpp
+class Solution {
+public:
+    ListNode* swapNodes(ListNode* head, int k) {
+        // Initialize pointers to the head of the list
+        ListNode* one = head;
+        ListNode* two = head;
+        ListNode* curr = head;
+
+        // Calculate the size of the list
+        int sz = 0;
+        while (curr)
+            sz++, curr = curr -> next;
+
+        // Move 'one' pointer to the kth node from the beginning
+        for (int i = 1; i < k; i++)
+            one = one -> next;
+
+        // Move 'two' pointer to the kth node from the end
+        for (int i = 1; i < sz - k + 1; i++)
+            two = two -> next;
+
+        // Swap the values of the two nodes
+        swap(one -> val, two -> val);
+
+        // Return the updated head of the list
+        return head;
+    }
+
+};
+```
+    
+<hr>
+<br><br>
+
+## 16)  [Swap Nodes in Pairs](https://leetcode.com/problems/swap-nodes-in-pairs/)
+
+### Difficulty
+
+![](https://img.shields.io/badge/Medium-orange?style=for-the-badge)
+
+### Related Topic
+
+`Linked List` `Recursion`
+
+### Code
+
+
+```cpp
+class Solution {
+public:
+    ListNode* swapPairs(ListNode* head) {
+        // If the linked list is empty or has only one node
+        if(head == NULL) return NULL;
+        if(head -> next == NULL) return head;
+
+        // Store the next node in a variable
+        ListNode* next = head -> next;
+
+        // Recursively swap the pairs of nodes
+        head -> next = swapPairs(next -> next);
+        next -> next = head;
+
+        // Return the new head of the swapped linked list
+        return next;
+    }
+};
+```
+    
+<hr>
+<br><br>
+
+## 17)  [Maximum Twin Sum of a Linked List](https://leetcode.com/problems/maximum-twin-sum-of-a-linked-list/)
+
+### Difficulty
+
+![](https://img.shields.io/badge/Medium-orange?style=for-the-badge)
+
+### Related Topic
+
+`Linked List` `Two Pointers` `Stack`
+
+### Code
+
+
+```cpp
+class Solution {
+public:
+    
+    int pairSum(ListNode* head) {
+        // Create a vector to store the values of the linked list nodes
+        vector < int > nums;
+        ListNode* curr = head;
+
+        // Traverse the linked list and store the values in the vector
+        while (curr != nullptr) {
+            nums.push_back(curr -> val);
+            curr = curr -> next;
+        }
+
+        // Initialize left and right pointers, and the maximum sum
+        int l = 0, r = nums.size() - 1, mx_sum = INT_MIN;
+
+        // Find the maximum sum of pairs
+        while (l < r)
+            mx_sum = max(mx_sum, nums[l++] + nums[r--]);
+
+        // Return the maximum sum
+        return mx_sum;
+    }
+
+};
+```
+    
+<hr>
+<br><br>
+
+## 18)  [Minimum Number of Vertices to Reach All Nodes](https://leetcode.com/problems/minimum-number-of-vertices-to-reach-all-nodes/)
+
+### Difficulty
+
+![](https://img.shields.io/badge/Medium-orange?style=for-the-badge)
+
+### Related Topic
+
+`Graph`
+
+### Code
+
+
+```cpp
+class Solution {
+public:
+    vector<int> findSmallestSetOfVertices(int n, vector<vector<int>>& edges) {
+        // Create two arrays to store the count of outgoing and incoming edges for each vertex
+        vector<int> from(n), to(n);
+
+        // Count the number of outgoing and incoming edges for each vertex
+        for (auto& vec : edges) {
+            from[vec[0]]++;  // Increment the outgoing edge count for the source vertex
+            to[vec[1]]++;    // Increment the incoming edge count for the destination vertex
+        }
+
+        // Create a vector to store the result
+        vector < int > res;
+
+        // Iterate over all vertices
+        for (int i = 0; i < n; i++) {
+            // Check if the vertex has outgoing edges but no incoming edges
+            if (from[i] && !to[i])
+                res.push_back(i);  // Add the vertex to the result
+        }
+
+        // Return the result vector
+        return res;
+    }
+
+};
+```
+    
+<hr>
+<br><br>
+
+## 19)  [Is Graph Bipartite?](https://leetcode.com/problems/is-graph-bipartite/)
+
+### Difficulty
+
+![](https://img.shields.io/badge/Medium-orange?style=for-the-badge)
+
+### Related Topic
+
+`Depth-First Search` `Breadth-First Search` `Union Find` `Graph`
+
+### Code
+
+
+```cpp
+class Solution {
+public:
+
+    vector < int > colour;
+
+    // Function to check if a graph is bipartite
+    bool is_Bipartite(int u, vector < vector < int > >& adj) {
+        // Iterate over the adjacent vertices of u
+        for (auto v : adj[u]) {
+            // If v has the same color as u, the graph is not bipartite
+            if (colour[v] == colour[u])
+                return false;
+            // If v is uncolored, assign a different color to it
+            else if (colour[v] == 0) {
+                colour[v] = -colour[u];
+                // Recursively check if the subgraph starting from v is bipartite
+                if (!is_Bipartite(v, adj))
+                    return false;
+            }
+        }
+        // All adjacent vertices have been processed and no conflict was found
+        return true;
+    }
+
+    bool isBipartite(vector < vector < int > >& graph) {
+        int n = graph.size();
+        colour = vector < int > (n);
+        
+        bool isBip = true;
+        // Process each vertex in the graph
+        for (int u = 0; u < n; u++) {
+            // If the vertex is uncolored, assign color 1 to it
+            if (!colour[u]) {
+                colour[u] = 1;
+                // Check if the subgraph starting from u is bipartite
+                isBip &= is_Bipartite(u, graph);
+            }
+        }
+
+        // Return whether the graph is bipartite or not
+        return isBip;
+    }
+
+};
+```
+    
+<hr>
+<br><br>
+
+## 20)  [Evaluate Division](https://leetcode.com/problems/evaluate-division/)
+
+### Difficulty
+
+![](https://img.shields.io/badge/Medium-orange?style=for-the-badge)
+
+### Related Topic
+
+`Array` `Depth-First Search` `Breadth-First Search` `Union Find` `Graph` `Shortest Path`
+
+### Code
+
+
+```cpp
+class Solution {
+public:
+    
+    unordered_map < string, unordered_map < string, double > > graph;
+
+    vector<double> calcEquation(vector<vector<string>>& equations, vector<double>& values, vector<vector<string>>& queries){
+        for (int i = 0; i < equations.size(); i++) {
+            auto equation = equations[i];
+            string a = equation[0];
+            string b = equation[1];
+            double value = values[i];
+
+            graph[a][b] = value;
+            graph[b][a] = 1 / value;
+        }
+
+        vector < double > res;
+        for (auto it : queries) {
+            string start = it[0];
+            string end = it[1];
+            // Calculate the result using breadth-first search
+            double ans = bfs(start, end);
+            res.push_back(ans);
+        }
+        return res;
+    }
+
+    double bfs(string& start, string& target) {
+        // check if current and target nodes exist in the graph
+        if (graph.find(start) == graph.end() || graph.find(target) == graph.end())
+            return -1;
+
+        queue < pair < string, double > > q;
+        q.push({start, 1});
+
+        unordered_set < string > vis;
+        vis.insert(start);
+
+        while (!q.empty()) {
+            auto curr = q.front();
+            q.pop();
+
+            string node = curr.first;
+            double value = curr.second;
+
+            // if current node is the target
+            if (node == target)
+                return value;
+
+            // Traverse the neighbors of the current node
+            for (auto neighbor : graph[node]) {
+                string next = neighbor.first;
+                // check if the neighbor has not been visited before
+                if (vis.find(next) == vis.end()) {
+                    vis.insert(next);
+                    // multiply the current value by the value of the edge to the neighbor
+                    q.push({next, value * neighbor.second});
+                }
+            }
+        }
+        return -1;
+    }
+};
+```
+    
+<hr>
+<br><br>
+
+## 21)  [Shortest Bridge](https://leetcode.com/problems/shortest-bridge/)
+
+### Difficulty
+
+![](https://img.shields.io/badge/Medium-orange?style=for-the-badge)
+
+### Related Topic
+
+`Array` `Depth-First Search` `Breadth-First Search` `Matrix`
+
+### Code
+
+
+```cpp
+class Solution {
+
+    int n;
+    vector < vector < int > > grid;
+
+    // Check if the current position (r, c) is a valid position for island expansion
+    bool is_valid(int r, int c, set < pair < int, int > >& isL) {
+        return min(r, c) >= 0 && max(r, c) < n && !isL.count({r, c}) && grid[r][c];
+    }
+
+    // Depth-first search to expand the island
+    void dfs(int r, int c, set < pair < int, int > >& isL) {
+        if (!is_valid(r, c, isL)) return;
+        isL.insert({r, c});  // Mark the current position as visited
+        grid[r][c] = 0;     // Set the current position as water
+        dfs(r + 1, c, isL);  // Check the bottom position
+        dfs(r - 1, c, isL);  // Check the top position
+        dfs(r, c + 1, isL);  // Check the right position
+        dfs(r, c - 1, isL);  // Check the left position
+    }
+
+public:
+    int shortestBridge(vector<vector<int>>& grid) {
+        this -> n = grid.size();
+        this -> grid = grid;
+
+        set < pair < int, int > > isl1, isl2;  // Sets to store the positions of the two islands
+        bool isL = true;  // Flag to differentiate between the two islands
+
+        for (int x = 0; x < n; x++) {
+            for (int y = 0; y < n; y++) {
+                if (grid[x][y]) {
+                    if (isL)
+                        dfs(x, y, isl1), isL = false;  // Expand the first island
+                    else
+                        dfs(x, y, isl2);  // Expand the second island
+                }
+            }
+        }
+
+        int ans = INT_MAX;
+        for (auto [x1, y1] : isl1)
+            for (auto [x2, y2] : isl2)
+                ans = min(ans, abs(x1 - x2) + abs(y1 - y2) - 1);  // Calculate the minimum distance between the two islands
+            
+
+        return ans;
+    }
+};
+```
+    
+<hr>
+<br><br>
+
+## 23)  [Kth Largest Element in a Stream](https://leetcode.com/problems/kth-largest-element-in-a-stream/)
+
+### Difficulty
+
+![](https://img.shields.io/badge/Easy-green?style=for-the-badge)
+
+### Related Topic
+
+`Tree` `Design` `Binary Search Tree` `Heap (Priority Queue)` `Binary Tree` `Data Stream`
+
+### Code
+
+
+```cpp
+class KthLargest {
+public:
+    
+    // Priority queue to store the kth largest elements
+    priority_queue < int, vector < int >, greater < int > > pq;
+    int k;
+
+    // Constructor to initialize the object with k and a vector of numbers
+    KthLargest(int k, vector < int >& nums) {
+        this -> k = k;
+        
+        // Add all the numbers to the priority queue
+        for(auto& x : nums)
+            add(x);
+    }
+    
+    // Function to add a new value to the priority queue and return the kth largest element
+    int add(int val) {
+        // Add the new value to the priority queue
+        pq.push(val);  
+        
+        // Remove the smallest element if the size exceeds k
+        if(pq.size() > k)
+            pq.pop();
+        
+        // Return the current kth largest element
+        return pq.top();  
+    }
+};
+```
+    
+<hr>
+<br><br>
+
+## 24)  [Maximum Subsequence Score](https://leetcode.com/problems/maximum-subsequence-score/)
+
+### Difficulty
+
+![](https://img.shields.io/badge/Medium-orange?style=for-the-badge)
+
+### Related Topic
+
+`Array` `Greedy` `Sorting` `Heap (Priority Queue)`
+
+### Code
+
+
+```cpp
+class Solution {
+public:
+    long long maxScore(vector<int>& nums1, vector<int>& nums2, int k) {
+        // Get the size of nums1
+        int n = nums1.size();
+        
+        // Create a vector of indices from 0 to n - 1
+        vector < int > idx(n);
+        iota(idx.begin(), idx.end(), 0);
+        
+        // Sort the indices based on the corresponding values in nums2
+        sort(idx.begin(), idx.end(), [&](int i, int j){
+            return nums2[i] < nums2[j];
+        });
+        
+        // Create a min-heap priority queue
+        priority_queue < int, vector < int >, greater < int > > pq;
+        
+        // Variables to keep track of the current sum and maximum sequence
+        long long curr_sum = 0, max_seq = 0;
+        
+        // Lambda function to add an element to the current sum and the priority queue
+        auto add = [&](int x){
+            curr_sum += x;
+            pq.push(x);
+        };
+        
+        // Lambda function to remove the smallest element from the current sum and the priority queue
+        auto remove = [&](){
+            curr_sum -= pq.top();
+            pq.pop();
+        };
+        
+        // Iterate over the indices in reverse order
+        for(int i = n - 1; i >= 0; i--){
+            // Add the corresponding element from nums1 to the current sum and the priority queue
+            add(nums1[idx[i]]);
+            
+            // If the size of the priority queue reaches k, update the maximum sequence and remove the smallest element
+            if(pq.size() == k){
+                max_seq = max(max_seq, curr_sum * nums2[idx[i]]);
+                remove();
+            }
+        }
+        
+        // Return the maximum sequence
+        return max_seq;
+    }
+};
+```
+    
+<hr>
+<br><br>
+
+## 25)  [New 21 Game](https://leetcode.com/problems/new-21-game/)
+
+### Difficulty
+
+![](https://img.shields.io/badge/Medium-orange?style=for-the-badge)
+
+### Related Topic
+
+`Math` `Dynamic Programming` `Sliding Window` `Probability and Statistics`
+
+### Code
+
+
+```cpp
+class Solution {
+public:
+    long long maxScore(vector<int>& nums1, vector<int>& nums2, int k) {
+        // Get the size of nums1
+        int n = nums1.size();
+        
+        // Create a vector of indices from 0 to n - 1
+        vector < int > idx(n);
+        iota(idx.begin(), idx.end(), 0);
+        
+        // Sort the indices based on the corresponding values in nums2
+        sort(idx.begin(), idx.end(), [&](int i, int j){
+            return nums2[i] < nums2[j];
+        });
+        
+        // Create a min-heap priority queue
+        priority_queue < int, vector < int >, greater < int > > pq;
+        
+        // Variables to keep track of the current sum and maximum sequence
+        long long curr_sum = 0, max_seq = 0;
+        
+        // Lambda function to add an element to the current sum and the priority queue
+        auto add = [&](int x){
+            curr_sum += x;
+            pq.push(x);
+        };
+        
+        // Lambda function to remove the smallest element from the current sum and the priority queue
+        auto remove = [&](){
+            curr_sum -= pq.top();
+            pq.pop();
+        };
+        
+        // Iterate over the indices in reverse order
+        for(int i = n - 1; i >= 0; i--){
+            // Add the corresponding element from nums1 to the current sum and the priority queue
+            add(nums1[idx[i]]);
+            
+            // If the size of the priority queue reaches k, update the maximum sequence and remove the smallest element
+            if(pq.size() == k){
+                max_seq = max(max_seq, curr_sum * nums2[idx[i]]);
+                remove();
+            }
+        }
+        
+        // Return the maximum sequence
+        return max_seq;
+    }
+};
+```
+    
+<hr>
+<br><br>
+
+## 26)  [Stone Game II](https://leetcode.com/problems/stone-game-ii/)
+
+### Difficulty
+
+![](https://img.shields.io/badge/Medium-orange?style=for-the-badge)
+
+### Related Topic
+
+`Array` `Math` `Dynamic Programming` `Game Theory`
+
+### Code
+
+
+```cpp
+class Solution {
+public:
+    int stoneGameII(vector<int>& piles) {
+        int n = piles.size();
+        
+        // dp[i][m] represents the maximum number of stones the player can obtain
+        // when starting at pile i with a maximum pick of m.
+        vector < vector < int > > dp(n, vector < int > (2 * n + 5));
+        
+        // sum[i] stores the sum of stones from pile i to the end.
+        vector < int > sum(n + 5);
+        
+        // Calculate the sum of stones from each pile to the end.
+        for (int i = n - 1; i >= 0; i--)
+            sum[i] = piles[i] + sum[i + 1];
+        
+        // Iterate over the piles from right to left.
+        for (int i = n - 1; i >= 0; i--) {
+            // Iterate over the maximum pick from 1 to n.
+            for (int m = 1; m <= n; m++) {
+                if (i + 2 * m >= n)
+                    // If there are not enough piles remaining, take all the stones.
+                    dp[i][m] = sum[i];
+                else {
+                    // Consider all possible picks from 1 to 2 * m.
+                    for (int x = 1; x <= 2 * m; x++)
+                        // Calculate the maximum stones the player can obtain
+                        // by either taking x stones and recursively solving for the remaining piles,
+                        // or not taking any stones and letting the other player play.
+                        dp[i][m] = max(dp[i][m], sum[i] - dp[i + x][max(m, x)]);
+                }
+            }
+        }
+        
+        // The maximum number of stones the first player can obtain starting from the first pile
+        // with a maximum pick of 1 is stored in dp[0][1].
+        return dp[0][1];
+    }
+};
+```
+    
+<hr>
+<br><br>
+
+## 27)  [Stone Game III](https://leetcode.com/problems/stone-game-iii/)
+
+### Difficulty
+
+![](https://img.shields.io/badge/Hard-red?style=for-the-badge)
+
+### Related Topic
+
+`Array` `Math` `Dynamic Programming` `Game Theory`
+
+### Code
+
+
+```cpp
+class Solution {
+public:
+    string stoneGameIII(const vector < int >& stones) {
+        int n = stones.size();
+
+        // Create a dynamic programming table with initial values set to -1e9
+        vector < int > dp(n + 1, -1e9);
+
+        // Set the value of the last cell in the dp table to 0
+        dp[n] = 0;
+
+        // Iterate backwards through the stones
+        for (int i = n - 1; i >= 0; --i) {
+            // Iterate from 0 to 2 (inclusive) to simulate taking 1, 2, or 3 stones
+            for (int k = 0, take = 0; k < 3 && i + k < n; ++k) {
+                // Calculate the total number of stones taken
+                take += stones[i + k];
+
+                // Update the value of dp[i] by taking the maximum of its current value
+                // and the difference between the total number of stones taken and the value
+                // of dp at the next position
+                dp[i] = max(dp[i], take - dp[min(i + k + 1, n)]);
+            }
+        }
+
+        // Create a vector with the possible outcomes: "Alice", "Tie", "Bob"
+        vector < string > ans = {"Alice", "Tie", "Bob"};
+
+        // Return the corresponding outcome based on the value of dp[0]
+        return ans[(dp[0] == 0) + (dp[0] < 0) * 2];
+    }
+};
+```
+    
+<hr>
+<br><br>
+
+## 28)  [Minimum Cost to Cut a Stick](https://leetcode.com/problems/minimum-cost-to-cut-a-stick/)
+
+### Difficulty
+
+![](https://img.shields.io/badge/Hard-red?style=for-the-badge)
+
+### Related Topic
+
+`Array` `Dynamic Programming` `Sorting`
+
+### Code
+
+
+```cpp
+class Solution {
+public:
+
+    int minCost(int n, vector < int >& cuts) {
+        // Get the size of the cuts vector
+        int m = cuts.size();
+
+        // Insert 0 at the beginning and n at the end of the cuts vector
+        cuts.insert(cuts.begin(), 0);
+        cuts.insert(cuts.end(), n);
+        
+        // Sort the cuts vector in ascending order
+        sort(cuts.begin(), cuts.end());
+        
+        // Create a 2D vector dp to store the minimum cost values
+        vector < vector < int > > dp(m + 5, vector < int > (m + 5, INT_MAX));
+        
+        // Initialize the base case where l > r with 0 cost
+        for(int l = 0; l <= m + 1; l++)
+            for(int r = l - 1; r >= 0; r--)
+                dp[l][r] = 0;
+        
+        // Calculate the minimum cost for each subproblem
+        for(int l = m; l >= 1; l--)
+            for(int r = 1; r <= m; r++)
+                for(int idx = l; idx <= r; idx++)
+                    // Update the minimum cost based on the cuts and subproblems
+                    dp[l][r] = min(dp[l][r], cuts[r + 1] - cuts[l - 1] + dp[l][idx - 1] + dp[idx + 1][r]);
+        
+        // Return the minimum cost of the original problem
+        return dp[1][m];
+    }
 };
 ```
     

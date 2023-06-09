@@ -48,6 +48,9 @@
 1. **[Stone Game II](#26--stone-game-ii)**
 1. **[Stone Game III](#27--stone-game-iii)**
 1. **[Minimum Cost to Cut a Stick](#28--minimum-cost-to-cut-a-stick)**
+1. **[Design Parking System](#29--design-parking-system)**
+1. **[Design HashSet](#30--design-hashset)**
+1. **[Design Underground System](#31--design-underground-system)**
 
 <hr>
 <br><br>
@@ -1538,6 +1541,143 @@ public:
         
         // Return the minimum cost of the original problem
         return dp[1][m];
+    }
+};
+```
+    
+<hr>
+<br><br>
+
+## 29)  [Design Parking System](https://leetcode.com/problems/design-parking-system/)
+
+### Difficulty
+
+![](https://img.shields.io/badge/Easy-green?style=for-the-badge)
+
+### Related Topic
+
+`Design` `Simulation` `Counting`
+
+### Code
+
+
+```cpp
+class ParkingSystem {
+public:
+
+    // Define a vector to store the number of available parking spaces for each car type
+    vector < int > carTypes;
+
+    ParkingSystem(int big, int medium, int small) {
+        // Initialize the vector with the given number of parking spaces for each car type
+        carTypes = { big, medium, small };
+    }
+    
+    bool addCar(int carType) {
+        // Decrease the number of available parking spaces for the given car type and check if it's still greater than 0
+        return carTypes[--carType]-- > 0;
+    }
+};
+```
+    
+<hr>
+<br><br>
+
+## 30)  [Design HashSet](https://leetcode.com/problems/design-hashset/)
+
+### Difficulty
+
+![](https://img.shields.io/badge/Easy-green?style=for-the-badge)
+
+### Related Topic
+
+`Array` `Hash Table` `Linked List` `Design` `Hash Function`
+
+### Code
+
+
+```cpp
+class MyHashSet {
+public:
+
+    // Declare an unordered_set named hash_set to store integers
+    unordered_set<int> hash_set;
+
+    MyHashSet() {
+        // Initialize the unordered_set using the default constructor
+        hash_set = unordered_set < int > ();
+    }
+    
+    void add(int key) {
+        // Insert the given key into the hash_set
+        hash_set.insert(key);
+    }
+    
+    void remove(int key) {
+        // Remove the given key from the hash_set
+        hash_set.erase(key);
+    }
+    
+    bool contains(int key) {
+        // Check if the given key exists in the hash_set and return true if it does, false otherwise
+        return hash_set.count(key);
+    }
+};
+```
+    
+<hr>
+<br><br>
+
+## 31)  [Design Underground System](https://leetcode.com/problems/design-underground-system/)
+
+### Difficulty
+
+![](https://img.shields.io/badge/Medium-orange?style=for-the-badge)
+
+### Related Topic
+
+`Hash Table` `String` `Design`
+
+### Code
+
+
+```cpp
+class UndergroundSystem {
+public:
+
+    // Map to store the travel details for each station pair
+    map<pair<string, string>, pair<int, int>> mp;
+    // Hash map to store the check-in details for each person
+    unordered_map<int, pair<string, int>> person;
+
+    // Constructor to initialize the data structures
+    UndergroundSystem() {
+        mp.clear();
+        person.clear();
+    }
+
+    // Function to record the check-in of a person
+    void checkIn(int id, string stationName, int t) {
+        person[id] = {stationName, t};
+    }
+
+    // Function to record the check-out of a person and calculate the travel duration
+    void checkOut(int id, string stationName, int t) {
+        // Check if the station pair exists in the map
+        if (mp.find({person[id].first, stationName}) == mp.end()) {
+            // If not, create a new entry with the travel duration and count set to the current duration and 1 respectively
+            mp[{person[id].first, stationName}] = {t - person[id].second, 1};
+        } else {
+            // If the station pair already exists, update the travel duration and count
+            mp[{person[id].first, stationName}].first += t - person[id].second;
+            mp[{person[id].first, stationName}].second++;
+        }
+    }
+
+    // Function to calculate the average travel time between two stations
+    double getAverageTime(string startStation, string endStation) {
+        // Calculate and return the average travel time by dividing the total duration by the count
+        return 1.0 * mp[{startStation, endStation}].first / mp[{startStation, endStation}].second;
     }
 };
 ```
